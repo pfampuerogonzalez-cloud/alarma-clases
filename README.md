@@ -1,2 +1,2 @@
 # alarma-clases
-alarma para farmear minutos en la plataforma del curso
+alarma para farmear horas en la plataforma del curso
