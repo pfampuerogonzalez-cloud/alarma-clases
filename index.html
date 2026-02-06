@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temporizador de 30 Minutos</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+            color: #1c1e21;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 300px;
+        }
+
+        h1 { font-size: 1.5rem; margin-bottom: 1rem; color: #4b6cb7; }
+
+        #timer {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin: 20px 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        #startBtn { background-color: #28a745; color: white; }
+        #startBtn:hover { background-color: #218838; }
+
+        #stopBtn { background-color: #dc3545; color: white; }
+        #stopBtn:hover { background-color: #c82333; }
+
+        .status { margin-top: 15px; font-size: 0.9rem; color: #666; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Alarma Recurrente</h1>
+        <div id="timer">30:00</div>
+        
+        <div class="controls">
+            <button id="startBtn" onclick="startTimer()">Iniciar</button>
+            <button id="stopBtn" onclick="stopTimer()">Detener</button>
+        </div>
+
+        <p class="status" id="statusMsg">Presiona iniciar para comenzar el ciclo.</p>
+        
+        <audio id="alarmSound" src="alarma.mp3" preload="auto"></audio>
+    </div>
+
+    <script>
+        let timeLeft = 30 * 60; // 30 minutos en segundos
+        let timerInterval = null;
+        const timerDisplay = document.getElementById('timer');
+        const alarmSound = document.getElementById('alarmSound');
+        const statusMsg = document.getElementById('statusMsg');
+
+        function updateDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            if (timerInterval) return; // Evita múltiples intervalos
+
+            statusMsg.textContent = "La alarma sonará cada 30 minutos.";
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateDisplay();
+
+                if (timeLeft <= 0) {
+                    // Suena la alarma
+                    alarmSound.play();
+                    
+                    // Reiniciar el ciclo automáticamente
+                    timeLeft = 30 * 60;
+                    statusMsg.textContent = "¡Alarma activada! Reiniciando ciclo...";
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            timeLeft = 30 * 60;
+            updateDisplay();
+            alarmSound.pause();
+            alarmSound.currentTime = 0;
+            statusMsg.textContent = "Temporizador detenido.";
+        }
+    </script>
+</body>
+</html>
